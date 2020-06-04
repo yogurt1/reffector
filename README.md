@@ -69,7 +69,6 @@ someEvent.emit('b'); // prints b
 ### Все вместе
 
 ```typescript
-import { interval } from 'rxjs';
 import { exhaustMap, switchMap } from 'fetch';
 import { fromFetch } from 'rxjs/fetch';
 import { Atom, Event, Store } from 'reffector';
@@ -82,8 +81,10 @@ const appStore = new Store<AppState>({
   isLoggedIn: false,
 });
 
+const logInEvent = new Event();
+
 // call login every second
-const logIn$ = interval(1000).pipe(
+const logIn$ = logInEvent.pipe(
   exhaustMap(() => fromFetch('/login').pipe(
     switchMap(response => response.json()),
     tap({
@@ -102,6 +103,8 @@ appStore.on(logIn$, {
 appStore.subscribe(state => {
   console.log('new state:', state);
 });
+
+logInEvent.emit();
 ```
 
 ------
